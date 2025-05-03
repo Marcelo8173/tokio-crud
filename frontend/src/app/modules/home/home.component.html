@@ -1,0 +1,28 @@
+<h1>Usuários</h1>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+</div>
+
+<table *ngIf="!loading" class="table table-striped">
+  <thead class="header-table">
+    <tr>
+      <th (click)="sort('nome')">Nome</th>
+      <th (click)="sort('email')">Email</th>
+      <th (click)="sort('createdAt')">Criado em</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users" (click)="goToUser(user.id)">
+      <td>{{ user.nome }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<app-pagination 
+  [page]="page" 
+  [totalPages]="totalPages" 
+  (pageChanged)="changePage($event)">
+</app-pagination>

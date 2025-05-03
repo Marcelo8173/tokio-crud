@@ -1,0 +1,71 @@
+<div style="display: flex; align-items: center; ">
+  <h1>Endereços</h1>
+  <button class="btn-primary" (click)="openModalCreate()">Adicionar Novo Endereço</button>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+</div>
+
+<table *ngIf="!loading" class="table table-striped">
+  <thead class="header-table">
+    <tr>
+      <th>Ações</th>
+      <th (click)="sort('logradouro')">Logradouro</th>
+      <th (click)="sort('numero')">Número</th>
+      <th (click)="sort('complemento')">Complemento</th>
+      <th (click)="sort('bairro')">Bairro</th>
+      <th (click)="sort('cidade')">Cidade</th>
+      <th (click)="sort('estado')">Estado</th>
+      <th (click)="sort('cep')">CEP</th>
+      <th (click)="sort('createdAt')">Criado em</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let add of address">
+      <td>
+        <button title="Editar" (click)="openModalEdit(add)" class="btn btn-sm btn-outline-primary me-2">
+          <span>Editar</span>
+        </button>
+        <button title="Deletar" (click)="openModalDelete(add)" class="btn-outline-danger">
+          <span>Deletar</span>
+        </button>
+      </td>
+      <td>{{ add.logradouro }}</td>
+      <td>{{ add.numero }}</td>
+      <td>{{ add.complemento }}</td>
+      <td>{{ add.bairro }}</td>
+      <td>{{ add.cidade }}</td>
+      <td>{{ add.estado }}</td>
+      <td>{{ add.cep }}</td>
+      <td>{{ add.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+    </tr>
+  </tbody>
+
+  <app-modal [isOpen]="showModalEdit" (close)="closeModalEdit()">
+    <h2 class="modal-title" modal-title>Editar Endereço</h2>
+    <app-address-form *ngIf="selectedAddressToEdit" [addressData]="selectedAddressToEdit" (save)="onSaveEdit($event)">
+    </app-address-form>
+  </app-modal>
+
+  <app-modal [isOpen]="addModalOpen" (close)="closeModalCreate()">
+    <h2 class="modal-title" modal-title>Adicionar Endereço</h2>
+    <app-address-form (save)="onSaveModalCreate($event)">
+    </app-address-form>
+  </app-modal>
+
+  <app-modal [isOpen]="showModalDelete" (close)="closeModalDelete()">
+    <h2 class="modal-title" modal-title>Deletar Endereço</h2>
+    <div *ngIf="selectedAddressToDelete">
+      <p>Tem certeza que deseja deletar o endereço <strong>{{ selectedAddressToDelete.logradouro }},
+          {{selectedAddressToDelete.numero}}</strong>?</p>
+      <div class="buttons-footer-container">
+        <button (click)="confirmDelete()" class="btn-outline-danger">Confirmar</button>
+        <button (click)="closeModalDelete()" class="btn-outline-primary">Cancelar</button>
+      </div>
+    </div>
+  </app-modal>
+</table>
+
+<app-pagination [page]="page" [totalPages]="totalPages" (pageChanged)="changePage($event)">
+</app-pagination>

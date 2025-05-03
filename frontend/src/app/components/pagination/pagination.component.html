@@ -1,0 +1,15 @@
+<div class="pagination">
+    <button class="page-link"  (click)="changePage(page - 1)">←</button>
+  
+    <ng-container *ngFor="let p of [].constructor(totalPages); let i = index">
+      <button
+        class="page-link"
+        [ngClass]="{ active: page === i }"
+        (click)="changePage(i)">
+        {{ i + 1 }}
+      </button>
+    </ng-container>
+  
+    <button class="page-link" (click)="changePage(page + 1)">→</button>
+  </div>
+  

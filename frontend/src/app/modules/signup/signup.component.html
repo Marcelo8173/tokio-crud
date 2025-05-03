@@ -1,0 +1,37 @@
+<div class="signup-container">
+  
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <app-error [error]="error"></app-error>
+      <h2>Criar Conta</h2>
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input id="nome" formControlName="nome" type="text" />
+        <div *ngIf="submitted && f['nome'].errors" class="error">
+          <small *ngIf="f['nome'].errors?.['required']">Nome é obrigatório.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" formControlName="email" type="email" />
+        <div *ngIf="submitted && f['email'].errors" class="error">
+          <small *ngIf="f['email'].errors?.['required']">Email é obrigatório.</small>
+          <small *ngIf="f['email'].errors?.['email']">Email inválido.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="senha">Senha:</label>
+        <input id="senha" formControlName="senha" type="password" />
+        <div *ngIf="submitted && f['senha'].errors" class="error">
+          <small *ngIf="f['senha'].errors?.['required']">Senha é obrigatória.</small>
+        </div>
+      </div>
+  
+      <button type="submit">Criar Conta</button>
+      <div class="signup-footer">
+        <button type="button" class="back-to-login" (click)="onBackToLogin()">Voltar para o Login</button>
+      </div>
+    </form>
+  </div>
+  

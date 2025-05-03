@@ -1,0 +1,106 @@
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #555; /* cinza leve */
+    font-weight: 600;
+    text-align: left; /* alinhado à esquerda */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table th {
+    /* background-color: #f5f5f5; */
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+    list-style: none;
+  }
+  
+  .page-item {
+    margin: 0 5px;
+  }
+  
+  .page-link {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    color: #007bff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 4px;
+  }
+  .header-table {
+    background: #d6e0f1;
+  }
+  .page-link:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .page-item.disabled .page-link {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .buttons-footer-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-outline-primary {
+    border: none;
+    cursor: pointer;
+    background: none;
+  }
+  .btn-outline-danger {
+    border: none;
+    background: rgb(224, 152, 152);
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .btn-primary {
+    padding: 6px;
+    background-color: #1976d2; /* Cor do botão de login */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 10%;
+    margin-left: 6px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1565c0; /* Cor ao passar o mouse no botão */
+  }
+  
