@@ -66,8 +66,7 @@ public class AddressService {
         this.addressRepository.deleteById(id);
     }
 
-    public void createNewAddress(AddressDTO dto, String auth) throws NotFound, NotValid{
-        UUID userId = tokenService.extractUserId(auth);
+    public void createNewAddress(AddressDTO dto, UUID userId) throws NotFound, NotValid{
         Optional<User> user = this.userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFound(HttpStatus.BAD_REQUEST, "User nor found");

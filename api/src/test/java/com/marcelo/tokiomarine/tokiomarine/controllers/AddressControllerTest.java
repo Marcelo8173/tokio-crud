@@ -9,6 +9,7 @@ import com.marcelo.tokiomarine.tokiomarine.DTOs.UserDTO;
 import com.marcelo.tokiomarine.tokiomarine.domain.User;
 import com.marcelo.tokiomarine.tokiomarine.domain.enums.TypeUser;
 import com.marcelo.tokiomarine.tokiomarine.repositories.UserRepository;
+import com.marcelo.tokiomarine.tokiomarine.services.Login.TokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -44,6 +45,8 @@ class AddressControllerTest {
     @InjectMocks
     private UserController userController;
 
+    @InjectMocks
+    private TokenService tokenService;
     @Autowired
     TestRestTemplate restTemplate;
     @LocalServerPort
@@ -56,7 +59,7 @@ class AddressControllerTest {
         UserDTO userDTO = new UserDTO("user123@mail.com", "admin", "User@123");
 
         Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             userRepository.delete(existingUser.get());
         }
         String createUserUrl = "http://localhost:" + port + "/user";
@@ -86,9 +89,12 @@ class AddressControllerTest {
                 "Centro",
                 "São Paulo",
                 "SP",
-                "12345-678"
+                "03065070"
         );
-        String url = "http://localhost:" + port + "/address";
+
+        UUID userId = tokenService.extractUserId(token);
+
+        String url = "http://localhost:" + port + "/address/" + userId;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
         HttpEntity<AddressDTO> entity = new HttpEntity<>(addressDTO, headers);
@@ -102,7 +108,7 @@ class AddressControllerTest {
     void listAddressById_shouldReturnPaginatedAddressList() throws JsonProcessingException {
         UserDTO userDTO = new UserDTO("user123@mail.com", "admin", "User@123");
         Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             userRepository.delete(existingUser.get());
         }
         String createUserUrl = "http://localhost:" + port + "/user";
@@ -150,11 +156,11 @@ class AddressControllerTest {
                 "Centro",
                 "São Paulo",
                 "SP",
-                "12345-678"
+                "03065070"
         );
         HttpEntity<AddressDTO> addressEntity = new HttpEntity<>(addressDTO, headers);
         ResponseEntity<Void> createAddressResponse = restTemplate.exchange(
-                "http://localhost:" + port + "/address",
+                "http://localhost:" + port + "/address/" + userId,
                 HttpMethod.POST,
                 addressEntity,
                 Void.class
@@ -184,8 +190,8 @@ class AddressControllerTest {
 
         UserDTO userDTO = new UserDTO("delete@mail.com", "admin", "User@123");
         Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
-        if(existingUser.isPresent()) {
-            userRepository.delete(existingUser.get()); // Deleta o usuário se já existir
+        if (existingUser.isPresent()) {
+            userRepository.delete(existingUser.get());
         }
         restTemplate.postForEntity("http://localhost:" + port + "/user", userDTO, String.class);
 
@@ -213,9 +219,9 @@ class AddressControllerTest {
         }
         assertNotNull(userId);
 
-        AddressDTO addressDTO = new AddressDTO("Rua B", "321", "", "Bairro", "Cidade", "SP", "11111-111");
+        AddressDTO addressDTO = new AddressDTO("Rua B", "321", "", "Bairro", "Cidade", "SP", "03065070");
         restTemplate.exchange(
-                "http://localhost:" + port + "/address",
+                "http://localhost:" + port + "/address/" + userId,
                 HttpMethod.POST,
                 new HttpEntity<>(addressDTO, headers),
                 String.class
@@ -251,7 +257,6 @@ class AddressControllerTest {
     }
 
 
-
     @Test
     @DisplayName("It should delete address by ID if user is owner or admin")
     void deleteAddress_shouldSucceedForOwnerOrAdmin() throws Exception {
@@ -259,7 +264,7 @@ class AddressControllerTest {
 
         UserDTO userDTO = new UserDTO("delete@mail.com", "admin", "User@123");
         Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
-        if(existingUser.isPresent()) {
+        if (existingUser.isPresent()) {
             userRepository.delete(existingUser.get());
         }
         restTemplate.postForEntity("http://localhost:" + port + "/user", userDTO, String.class);
@@ -290,7 +295,7 @@ class AddressControllerTest {
 
         AddressDTO addressDTO = new AddressDTO("Rua B", "321", "", "Bairro", "Cidade", "SP", "11111-111");
         restTemplate.exchange(
-                "http://localhost:" + port + "/address",
+                "http://localhost:" + port + "/address/" + userId,
                 HttpMethod.POST,
                 new HttpEntity<>(addressDTO, headers),
                 String.class

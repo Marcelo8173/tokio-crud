@@ -49,10 +49,10 @@ public class AddressController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping
+    @PostMapping("{id}")
     public ResponseEntity<Void> createNewAddress(@RequestBody @Valid AddressDTO dto,
-                                                 @RequestHeader(name = "Authorization") String authorizationHeader) throws NotFound, NotValid {
-        this.addressService.createNewAddress(dto, authorizationHeader);
+                                                 @PathVariable UUID id) throws NotFound, NotValid {
+        this.addressService.createNewAddress(dto, id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

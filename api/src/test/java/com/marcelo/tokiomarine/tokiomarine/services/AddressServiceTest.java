@@ -74,7 +74,7 @@ class AddressServiceTest {
         Address address = new Address();
         when(addressRepository.findById(id)).thenReturn(Optional.of(address));
         when(addressRepository.save(any(Address.class))).thenAnswer(i -> i.getArgument(0));
-
+        when(validatedService.validationCep(dto.cep())).thenReturn(true);
         Address updated = addressService.updateAddress(id, dto);
 
         assertEquals("Rua X", updated.getLogradouro());
@@ -120,14 +120,15 @@ class AddressServiceTest {
     @DisplayName(value = "It should be able create a new Address")
     void createNewAddress_ShouldSaveNewAddress() throws NotFound {
         UUID userId = UUID.randomUUID();
-        AddressDTO dto = new AddressDTO("Rua Teste", "12", "", "", "", "", "11111111");
+        AddressDTO dto = new AddressDTO("Rua Teste", "12", "", "", "", "", "03065070");
         User user = new User();
         String token = "Bearer xyz";
 
         when(tokenService.extractUserId(token)).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(validatedService.validationCep(dto.cep())).thenReturn(true);
 
-        addressService.createNewAddress(dto, token);
+        addressService.createNewAddress(dto, userId);
 
         ArgumentCaptor<Address> addressCaptor = ArgumentCaptor.forClass(Address.class);
         verify(addressRepository).save(addressCaptor.capture());
@@ -143,8 +144,9 @@ class AddressServiceTest {
 
         when(tokenService.extractUserId(token)).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(validatedService.validationCep(dto.cep())).thenReturn(true);
 
-        assertThrows(NotFound.class, () -> addressService.createNewAddress(dto, token));
+        assertThrows(NotFound.class, () -> addressService.createNewAddress(dto, userId));
     }
 
 }
