@@ -89,9 +89,8 @@ export const environment = {
 ```
 
 ✨ Observações
-O frontend redireciona chamadas para /api diretamente ao backend via Nginx (configuração no nginx.conf)
-
-O banco de dados está com volume persistente no Docker
+- esse projeto tem um user admin criado no seeds quando o projeto é inicializado
+- email: admin@mail.com e senha: Admin@123
 
 📫 Contato
 Dúvidas ou sugestões? Fique à vontade para abrir uma issue ou pull request.
