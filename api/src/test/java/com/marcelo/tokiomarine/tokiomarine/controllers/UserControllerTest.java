@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marcelo.tokiomarine.tokiomarine.DTOs.AuthenticationDTO;
 import com.marcelo.tokiomarine.tokiomarine.DTOs.UserDTO;
+import com.marcelo.tokiomarine.tokiomarine.DTOs.UserEditDTO;
 import com.marcelo.tokiomarine.tokiomarine.domain.User;
 import com.marcelo.tokiomarine.tokiomarine.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -102,5 +103,46 @@ class UserControllerTest {
         JsonNode contentArray = usersJson.get("content");
         assertTrue(contentArray.isArray());
         assertFalse(contentArray.isEmpty());
+    }
+
+    @Test
+    @DisplayName("It should update an existing user")
+    void updateUser() throws JsonProcessingException {
+        UserDTO userDTO = new UserDTO("user123@mail.com", "admin", "User@123");
+
+        Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
+        if (existingUser.isPresent()) {
+            userRepository.delete(existingUser.get());
+        }
+
+        String createUserUrl = "http://localhost:" + port + "/user";
+        restTemplate.postForEntity(createUserUrl, userDTO, String.class);
+
+        String loginUrl = "http://localhost:" + port + "/auth/login";
+        AuthenticationDTO loginDTO = new AuthenticationDTO(userDTO.email(), userDTO.senha());
+        ObjectMapper mapper = new ObjectMapper();
+        String token = mapper.readTree(
+                restTemplate.postForEntity(loginUrl, loginDTO, String.class).getBody()
+        ).get("token").asText();
+
+        UserEditDTO userEditDTO = new UserEditDTO("admin", "newuser@mail.com");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        User user = userRepository.findByEmail(userDTO.email()).get();
+
+        String updateUserUrl = "http://localhost:" + port + "/user/" + user.getId();
+
+        HttpEntity<UserEditDTO> entity = new HttpEntity<>(userEditDTO, headers);
+        ResponseEntity<Void> updateUserResponse = restTemplate.exchange(
+                updateUserUrl,
+                HttpMethod.PUT,
+                entity,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.OK, updateUserResponse.getStatusCode());
+
+        User updatedUser = userRepository.findById(user.getId()).get();
+        assertEquals(userEditDTO.email(), updatedUser.getEmail());
     }
 }

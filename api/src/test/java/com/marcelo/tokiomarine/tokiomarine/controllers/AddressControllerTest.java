@@ -260,7 +260,7 @@ class AddressControllerTest {
         UserDTO userDTO = new UserDTO("delete@mail.com", "admin", "User@123");
         Optional<User> existingUser = userRepository.findByEmail(userDTO.email());
         if(existingUser.isPresent()) {
-            userRepository.delete(existingUser.get()); // Deleta o usuário se já existir
+            userRepository.delete(existingUser.get());
         }
         restTemplate.postForEntity("http://localhost:" + port + "/user", userDTO, String.class);
 

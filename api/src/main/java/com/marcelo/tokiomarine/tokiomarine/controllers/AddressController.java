@@ -4,6 +4,7 @@ import com.marcelo.tokiomarine.tokiomarine.DTOs.AddressDTO;
 import com.marcelo.tokiomarine.tokiomarine.DTOs.ListDefaultResponseDTO;
 import com.marcelo.tokiomarine.tokiomarine.domain.Address;
 import com.marcelo.tokiomarine.tokiomarine.domain.exceptions.NotFound;
+import com.marcelo.tokiomarine.tokiomarine.domain.exceptions.NotValid;
 import com.marcelo.tokiomarine.tokiomarine.services.AddressService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class AddressController {
 
     @PreAuthorize("hasRole('ADMIN') or @AddressSecurityPolice.isOwner(#id, authentication)")
     @PutMapping("{id}")
-    public ResponseEntity<Address> updateAddress(@PathVariable UUID id, @RequestBody AddressDTO dto) throws NotFound {
+    public ResponseEntity<Address> updateAddress(@PathVariable UUID id, @RequestBody AddressDTO dto) throws NotFound, NotValid {
         Address address = this.addressService.updateAddress(id, dto);
         return new ResponseEntity<>(address, HttpStatus.OK);
     }
@@ -50,7 +51,7 @@ public class AddressController {
 
     @PostMapping
     public ResponseEntity<Void> createNewAddress(@RequestBody @Valid AddressDTO dto,
-                                                 @RequestHeader(name = "Authorization") String authorizationHeader) throws NotFound {
+                                                 @RequestHeader(name = "Authorization") String authorizationHeader) throws NotFound, NotValid {
         this.addressService.createNewAddress(dto, authorizationHeader);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

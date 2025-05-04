@@ -24,6 +24,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 
 class AddressServiceTest {
@@ -31,13 +32,15 @@ class AddressServiceTest {
     private TokenService tokenService;
     private UserRepository userRepository;
     private AddressService addressService;
+    private ValidatedService validatedService;
 
     @BeforeEach
     void setUp() {
         addressRepository = mock(AddressRepository.class);
         tokenService = mock(TokenService.class);
         userRepository = mock(UserRepository.class);
-        addressService = new AddressService(addressRepository, tokenService, userRepository);
+        validatedService = mock(ValidatedService.class);
+        addressService = new AddressService(addressRepository, tokenService, userRepository, validatedService);
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.marcelo.tokiomarine.tokiomarine.services;
 
 import com.marcelo.tokiomarine.tokiomarine.DTOs.ListDefaultResponseDTO;
 import com.marcelo.tokiomarine.tokiomarine.DTOs.UserDTO;
+import com.marcelo.tokiomarine.tokiomarine.DTOs.UserEditDTO;
 import com.marcelo.tokiomarine.tokiomarine.domain.User;
 import com.marcelo.tokiomarine.tokiomarine.domain.enums.TypeUser;
 import com.marcelo.tokiomarine.tokiomarine.domain.exceptions.AlredyExist;
@@ -37,6 +38,23 @@ public class UserService {
         this.tokenService = tokenService;
     }
 
+    public void updateUser(UserEditDTO dto, UUID id) throws AlredyExist, NotFound {
+        Optional<User> hasEmail = this.userRepository.findByEmail(dto.email());
+
+        if (hasEmail.isPresent()) {
+            throw new AlredyExist(HttpStatus.BAD_REQUEST, "Email alredy exist");
+        }
+
+        User user = this.userRepository.findById(id).orElseThrow(() -> new NotFound(HttpStatus.BAD_REQUEST, "Address not found"));
+        user.setEmail(dto.email());
+        user.setNome(dto.nome());
+        this.userRepository.save(user);
+    }
+
+    public void deleteUser(UUID id) throws NotFound {
+        this.userRepository.findById(id).orElseThrow(() -> new NotFound(HttpStatus.BAD_REQUEST, "User not found"));
+        this.userRepository.deleteById(id);
+    }
     public void createUser(UserDTO dto) throws AlredyExist {
         if(!isValidPassword(dto.senha())) {
             throw new NotValid(HttpStatus.BAD_REQUEST, "Password not valid");

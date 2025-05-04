@@ -1,6 +1,7 @@
 package com.marcelo.tokiomarine.tokiomarine.services;
 
 import com.marcelo.tokiomarine.tokiomarine.DTOs.UserDTO;
+import com.marcelo.tokiomarine.tokiomarine.DTOs.UserEditDTO;
 import com.marcelo.tokiomarine.tokiomarine.domain.User;
 import com.marcelo.tokiomarine.tokiomarine.domain.enums.TypeUser;
 import com.marcelo.tokiomarine.tokiomarine.domain.exceptions.AlredyExist;
@@ -29,6 +30,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 import java.util.List;
 
 class UserServiceTest {
@@ -124,5 +126,38 @@ class UserServiceTest {
 
         assertThrows(NotFound.class, () -> userService.listUsers(0, 10, "id", "ASC", "", token));
     }
+
+    @Test
+    @DisplayName("It should update user when email is not in use")
+    void updateUser_ShouldUpdateUser_WhenEmailNotExists() throws AlredyExist, NotFound {
+        UUID userId = UUID.randomUUID();
+        UserEditDTO editDTO = new UserEditDTO("Novo Nome", "newemail@mail.com");
+
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setEmail("oldemail@mail.com");
+        existingUser.setNome("Nome Antigo");
+
+        when(userRepository.findByEmail(editDTO.email())).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+
+        userService.updateUser(editDTO, userId);
+
+        assertEquals("newemail@mail.com", existingUser.getEmail());
+        assertEquals("Novo Nome", existingUser.getNome());
+        verify(userRepository).save(existingUser);
+    }
+
+    @Test
+    @DisplayName("It should throw AlredyExist when email already exists")
+    void updateUser_ShouldThrowAlredyExist_WhenEmailExists() {
+        UUID userId = UUID.randomUUID();
+        UserEditDTO editDTO = new UserEditDTO("existing@mail.com", "Novo Nome");
+
+        when(userRepository.findByEmail(editDTO.email())).thenReturn(Optional.of(new User()));
+
+        assertThrows(AlredyExist.class, () -> userService.updateUser(editDTO, userId));
+    }
+
 
 }
