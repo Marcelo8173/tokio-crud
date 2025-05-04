@@ -36,6 +36,29 @@ tbody {
   cursor: pointer;
 }
 
+.btn-outline-primary {
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+.btn-outline-danger {
+  border: none;
+  background: rgb(224, 152, 152);
+  cursor: pointer;
+  padding: 6px;
+}
+
+.btn-outline-address {
+  
+  border: none;
+  background: rgb(102, 143, 197);
+  cursor: pointer;
+  padding: 6px;
+  margin-left: 6px;
+  color: #fff;
+}
+
+
 .pagination {
   display: flex;
   justify-content: center;

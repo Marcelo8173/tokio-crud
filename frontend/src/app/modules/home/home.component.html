@@ -7,22 +7,42 @@
 <table *ngIf="!loading" class="table table-striped">
   <thead class="header-table">
     <tr>
+      <th>Ações</th>
       <th (click)="sort('nome')">Nome</th>
       <th (click)="sort('email')">Email</th>
       <th (click)="sort('createdAt')">Criado em</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let user of users" (click)="goToUser(user.id)">
+    <tr *ngFor="let user of users">
+      <td>
+        <!-- <button title="Editar" class="btn btn-sm btn-outline-primary me-2">
+          <span>Editar</span>
+        </button> -->
+        <button title="Deletar" (click)="openModalDelete(user)" class="btn-outline-danger">
+          <span>Deletar</span>
+        </button>
+        <button title="Endereços" (click)="goToUser(user.id)" class="btn-outline-address">
+          <span>Endereços</span>
+        </button>
+      </td>
       <td>{{ user.nome }}</td>
       <td>{{ user.email }}</td>
       <td>{{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
     </tr>
   </tbody>
+  <app-modal [isOpen]="showModalDelete" (close)="closeModalDelete()">
+    <h2 class="modal-title" modal-title>Deletar Usúario</h2>
+    <div *ngIf="selectedUsersToDelete">
+      <p>Tem certeza que deseja deletar o usúario <strong>{{ selectedUsersToDelete.npme }},
+          {{selectedUsersToDelete.email}}</strong>?</p>
+      <div class="buttons-footer-container">
+        <button (click)="confirmDelete()" class="btn-outline-danger">Confirmar</button>
+        <button (click)="closeModalDelete()" class="btn-outline-primary">Cancelar</button>
+      </div>
+    </div>
+  </app-modal>
 </table>
 
-<app-pagination 
-  [page]="page" 
-  [totalPages]="totalPages" 
-  (pageChanged)="changePage($event)">
+<app-pagination [page]="page" [totalPages]="totalPages" (pageChanged)="changePage($event)">
 </app-pagination>

@@ -25,4 +25,9 @@ export class UserService {
 
     return this.http.get<any>(`${this.apiUrl}/user`, { params });
   }
+
+  deleteUser(id: string) {
+    return this.http.delete<any>(`${this.apiUrl}/user/${id}`);
+
+  }
 }

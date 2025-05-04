@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
+import { ModalComponent } from '../../components/modal/modal.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  imports: [CommonModule, PaginationComponent],
+  imports: [CommonModule, PaginationComponent, ModalComponent],
 })
 export class HomeComponent implements OnInit {
   users: any[] = [];
@@ -19,8 +20,9 @@ export class HomeComponent implements OnInit {
   direction: string = 'desc';
   totalPages: number = 0;
   loading: boolean = false;
-
-  constructor(private userService: UserService, private http: HttpClient, private router: Router) {}
+  showModalDelete = false;
+  selectedUsersToDelete: any = null;
+  constructor(private userService: UserService, private http: HttpClient, private router: Router) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -30,17 +32,17 @@ export class HomeComponent implements OnInit {
     this.loading = true;
 
     this.userService.getUsers(this.size, this.page, this.sortBy, this.direction)
-    .subscribe({
-      next: (res) => {
-        this.users = res.content;
-        this.totalPages = Math.ceil(res.totalElements / this.size) || 1;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar usuários:', err);
-        this.loading = false;
-      }
-    });
+      .subscribe({
+        next: (res) => {
+          this.users = res.content;
+          this.totalPages = Math.ceil(res.totalElements / this.size) || 1;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Erro ao carregar usuários:', err);
+          this.loading = false;
+        }
+      });
   }
 
   changePage(p: number) {
@@ -63,4 +65,27 @@ export class HomeComponent implements OnInit {
   goToUser(id: number) {
     this.router.navigate(['/address', id]);
   }
+
+  closeModalDelete() {
+    this.showModalDelete = false;
+  }
+
+  confirmDelete() {
+    this.userService.deleteUser(this.selectedUsersToDelete.id).subscribe({
+      next: (res) => {
+        this.loadUsers();
+        this.closeModalDelete();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuários:', err);
+      }
+    });
+  }
+
+  openModalDelete(user: any) {
+    this.showModalDelete = true;
+    this.selectedUsersToDelete = user;
+  }
+
+
 }
